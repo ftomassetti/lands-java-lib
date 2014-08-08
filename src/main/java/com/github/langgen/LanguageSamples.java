@@ -1,8 +1,5 @@
 package com.github.langgen;
 
-
-import javafx.util.Pair;
-
 import java.io.*;
 import java.util.*;
 
@@ -12,23 +9,45 @@ public class LanguageSamples {
 
     static {
         ALL_SAMPLES = new HashMap<String, List<String>>();
-        File samplesDir = new File("./python/langgen/lang_samples/");
-        for (File sampleFile : samplesDir.listFiles()){
-            String languageName = sampleFile.getName();
-            if (languageName.contains(".")){
-                languageName = languageName.substring(0, languageName.indexOf('.'));
-            }
+        // Unfortunately we have to list them because when they are in
+        // a Jar there is no way to get the list
+
+        String[] languageNames = new String[]{
+            "beowulf",
+            "celticmyth",
+            "elven",
+            "greek",
+            "hebrew",
+            "italian_cities",
+            "japanese",
+            "norse",
+            "norsemyth",
+            "odin",
+            "polish",
+            "roman",
+            "russian",
+            "saxon",
+            "welsh"
+        };
+
+        for (String languageName : languageNames){
             try {
-                ALL_SAMPLES.put(languageName, loadSamples(sampleFile));
+                InputStream is = LanguageSamples.class.getClassLoader().getResourceAsStream("lang_samples/"+languageName+".txt");
+                if (is!=null) {
+                    ALL_SAMPLES.put(languageName, loadSamples(is));
+                } else {
+                    // silently fail...
+                }
             } catch (IOException e){
+                e.printStackTrace();
                 // nothing to do
             }
         }
     }
 
-    private static List<String> loadSamples(File file) throws IOException {
+    private static List<String> loadSamples(InputStream is) throws IOException {
         List<String> samples = new ArrayList<String>();
-        InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "ISO-8859-1");
+        InputStreamReader isr = new InputStreamReader(is, "ISO-8859-1");
         BufferedReader br = new BufferedReader(isr);
         String line;
         while ((line = br.readLine()) != null) {
