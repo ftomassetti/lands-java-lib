@@ -3,7 +3,16 @@ package com.github.lands;
 public class Dimension {
 
     final int width;
+
+    public int getHeight() {
+        return height;
+    }
+
     final int height;
+
+    public int getWidth(){
+        return width;
+    }
 
     public Dimension(int width, int height) {
         this.width = width;

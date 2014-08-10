@@ -8,6 +8,14 @@ public class World {
     private final String name;
     private final Dimension dimension;
 
+    public BooleanMatrix getOcean() {
+        return ocean;
+    }
+
+    public BiomeMatrix getBiome() {
+        return biome;
+    }
+
     // always present
     private BooleanMatrix ocean;
     private FloatMatrix elevation;
