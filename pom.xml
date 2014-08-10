@@ -7,12 +7,12 @@
     <packaging>jar</packaging>
 
     <name>lands-java-lib</name>
-    <url>https://github.com/ftomassetti/lands-java-li</url>
+    <url>https://github.com/ftomassetti/lands-java-lib</url>
 
     <scm>
         <connection>scm:git:git@github.com:ftomassetti/lands-java-lib.git</connection>
         <developerConnection>scm:git:git@github.com:ftomassetti/lands-java-lib.git</developerConnection>
-        <url>https://github.com/ftomassetti/lands-java-li</url>
+        <url>https://github.com/ftomassetti/lands-java-lib</url>
     </scm>
 
     <properties>
