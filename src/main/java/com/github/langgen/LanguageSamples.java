@@ -31,7 +31,7 @@ public class LanguageSamples {
         };
 
         for (String languageName : languageNames){
-            String resourcePath = "/lang_samples/"+languageName+".txt";
+            String resourcePath = "lang_samples/"+languageName+".txt";
             try {
                 InputStream is = LanguageSamples.class.getClassLoader().getResourceAsStream(resourcePath);
                 if (is!=null) {
