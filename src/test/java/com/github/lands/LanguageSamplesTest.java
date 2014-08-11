@@ -10,7 +10,7 @@ public class LanguageSamplesTest {
 
     @Test
     public void languageSamplesAreCorrectlyLoaded() throws IOException {
-        assertFalse(LanguageSamples.getAll().isEmpty());
+        assertFalse("Language Samples were not loaded correctly", LanguageSamples.getAll().isEmpty());
     }
 
 }

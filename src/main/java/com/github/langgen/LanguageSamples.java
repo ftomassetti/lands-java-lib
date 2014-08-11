@@ -31,16 +31,16 @@ public class LanguageSamples {
         };
 
         for (String languageName : languageNames){
+            String resourcePath = "/lang_samples/"+languageName+".txt";
             try {
-                InputStream is = LanguageSamples.class.getClassLoader().getResourceAsStream("lang_samples/"+languageName+".txt");
+                InputStream is = LanguageSamples.class.getClassLoader().getResourceAsStream(resourcePath);
                 if (is!=null) {
                     ALL_SAMPLES.put(languageName, loadSamples(is));
                 } else {
-                    // silently fail...
+                    throw new RuntimeException("The language sample "+languageName+" was not found. Resource path = '"+resourcePath+"'");
                 }
             } catch (IOException e){
-                e.printStackTrace();
-                // nothing to do
+                throw new RuntimeException("Error occured loading sample "+languageName+". Resource path = '"+resourcePath+"'", e);
             }
         }
     }
