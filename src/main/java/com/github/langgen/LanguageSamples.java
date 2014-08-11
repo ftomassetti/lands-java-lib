@@ -72,7 +72,7 @@ public class LanguageSamples {
         List<String> names = new LinkedList<String>();
         names.addAll(ALL_SAMPLES.keySet());
         if (names.size()<2){
-            throw new IllegalStateException();
+            throw new IllegalStateException("Not enough samples are available");
         }
         int firstIndex = r.nextInt(names.size());
         int secondIndex = -1;
