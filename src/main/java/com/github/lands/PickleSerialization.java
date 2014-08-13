@@ -52,7 +52,6 @@ public final class PickleSerialization {
         return matrix;
     }
 
-
     private static BiomeMatrix loadBiomeMatrix(List<?> matrixRawData) {
         int height = matrixRawData.size();
         List<?> firstRow = (List<?>)matrixRawData.get(0);
@@ -70,24 +69,26 @@ public final class PickleSerialization {
         return matrix;
     }
 
-
-    public static World loadWorld(File file) throws IOException {
+    public static World loadWorld(final File file) throws IOException, IncorrectFileException {
         Unpickler unpickler = new Unpickler();
         ClassDict worldRaw = (ClassDict)unpickler.load(new FileInputStream(file));
 
-        String name = (String)worldRaw.get("name");
-        int width  = (Integer)worldRaw.get("width");
-        int height = (Integer)worldRaw.get("height");
+        try {
+            String name = (String) worldRaw.get("name");
+            int width = (Integer) worldRaw.get("width");
+            int height = (Integer) worldRaw.get("height");
 
-        World world = new World(name, new Dimension(width, height));
+            World world = new World(name, new Dimension(width, height));
 
-        world.setElevation(loadFloatMatrix((Map<?, ?>) worldRaw.get("elevation")));
-        world.setOcean(loadBooleanMatrix((List<?>) worldRaw.get("ocean")));
+            world.setElevation(loadFloatMatrix((Map<?, ?>) worldRaw.get("elevation")));
+            world.setOcean(loadBooleanMatrix((List<?>) worldRaw.get("ocean")));
 
-        if (worldRaw.containsKey("biome")) {
-            world.setBiome(loadBiomeMatrix((List<?>) worldRaw.get("biome")));
+            if (worldRaw.containsKey("biome")) {
+                world.setBiome(loadBiomeMatrix((List<?>) worldRaw.get("biome")));
+            }
+            return world;
+        } catch (Exception e){
+            throw new IncorrectFileException(file, e.toString());
         }
-
-        return world;
     }
 }

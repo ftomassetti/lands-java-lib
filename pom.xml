@@ -25,6 +25,11 @@
                 <directory>python/langgen</directory>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>python/langgen</directory>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -34,10 +34,14 @@ public class LanguageSamples {
             String resourcePath = "lang_samples/"+languageName+".txt";
             try {
                 InputStream is = LanguageSamples.class.getClassLoader().getResourceAsStream(resourcePath);
+                if (is==null){
+                    resourcePath = "/"+resourcePath;
+                    is = LanguageSamples.class.getClassLoader().getResourceAsStream(resourcePath);
+                }
                 if (is!=null) {
                     ALL_SAMPLES.put(languageName, loadSamples(is));
                 } else {
-                    throw new RuntimeException("The language sample "+languageName+" was not found. Resource path = '"+resourcePath+"'");
+                    throw new RuntimeException("The language sample "+languageName+" was not found. Resource path = '"+resourcePath+"'. URL "+LanguageSamples.class.getClassLoader().getResource(resourcePath));
                 }
             } catch (IOException e){
                 throw new RuntimeException("Error occured loading sample "+languageName+". Resource path = '"+resourcePath+"'", e);
