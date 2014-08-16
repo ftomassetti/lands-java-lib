@@ -28,6 +28,14 @@ public class World {
         this.dimension = dimension;
     }
 
+    @Override
+    public String toString() {
+        return "World{" +
+                "dimension=" + dimension +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     /**
      * For performance reasons we consider only the name and the dimension.
      * @param o
