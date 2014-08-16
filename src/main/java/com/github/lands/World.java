@@ -28,6 +28,31 @@ public class World {
         this.dimension = dimension;
     }
 
+    /**
+     * For performance reasons we consider only the name and the dimension.
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        World world = (World) o;
+
+        if (dimension != null ? !dimension.equals(world.dimension) : world.dimension != null) return false;
+        if (name != null ? !name.equals(world.name) : world.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (dimension != null ? dimension.hashCode() : 0);
+        return result;
+    }
+
     public String getName() {
         return name;
     }
@@ -51,4 +76,5 @@ public class World {
     public void setOcean(BooleanMatrix ocean) {
         this.ocean = ocean;
     }
+
 }
