@@ -2,6 +2,8 @@ package com.github.lands;
 
 import net.razorvine.pickle.Unpickler;
 import net.razorvine.pickle.objects.ClassDict;
+import org.python.core.PyObject;
+import org.python.util.PythonInterpreter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,16 +71,27 @@ public final class PickleSerialization {
         return matrix;
     }
 
+    private static PyObject getWorldPythonObject(ClassDict worldRaw)
+    {
+        PythonInterpreter interpreter = new PythonInterpreter();
+        interpreter.exec("import sys");
+        interpreter.exec("sys.path.append(\"python/lands/lands\") ");
+        interpreter.exec("from lands.world import *");
+        interpreter.set("world_raw", worldRaw);
+        return interpreter.eval("World.from_dict(world_raw)");
+    }
+
     public static World loadWorld(final File file) throws IOException, IncorrectFileException {
         Unpickler unpickler = new Unpickler();
         ClassDict worldRaw = (ClassDict)unpickler.load(new FileInputStream(file));
+        PyObject pythonWorld = getWorldPythonObject(worldRaw);
 
         try {
             String name = (String) worldRaw.get("name");
             int width = (Integer) worldRaw.get("width");
             int height = (Integer) worldRaw.get("height");
 
-            World world = new World(name, new Dimension(width, height));
+            World world = new World(pythonWorld, name, new Dimension(width, height));
 
             world.setElevation(loadFloatMatrix((Map<?, ?>) worldRaw.get("elevation")));
             world.setOcean(loadBooleanMatrix((List<?>) worldRaw.get("ocean")));

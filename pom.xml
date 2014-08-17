@@ -24,10 +24,16 @@
             <resource>
                 <directory>python/langgen</directory>
             </resource>
+            <resource>
+                <directory>python/lands</directory>
+            </resource>
         </resources>
         <testResources>
             <testResource>
                 <directory>python/langgen</directory>
+            </testResource>
+            <testResource>
+                <directory>python/lands</directory>
             </testResource>
         </testResources>
         <plugins>

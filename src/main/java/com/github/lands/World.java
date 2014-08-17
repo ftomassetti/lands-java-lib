@@ -1,9 +1,13 @@
 package com.github.lands;
 
+import org.python.core.PyObject;
+
 /**
  * A World, with all the different characteristics.
  */
 public class World {
+
+    private PyObject pythonObject;
 
     private final String name;
     private final Dimension dimension;
@@ -23,7 +27,8 @@ public class World {
     // optional
     private BiomeMatrix biome;
 
-    public World(String name, Dimension dimension){
+    public World(PyObject pythonObject, String name, Dimension dimension){
+        this.pythonObject = pythonObject;
         this.name = name;
         this.dimension = dimension;
     }
@@ -83,6 +88,11 @@ public class World {
 
     public void setOcean(BooleanMatrix ocean) {
         this.ocean = ocean;
+    }
+
+    public PyObject asPythonObject()
+    {
+        return this.pythonObject;
     }
 
 }

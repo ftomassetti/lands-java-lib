@@ -10,20 +10,20 @@ import static org.junit.Assert.*;
 public class PickleSerializationTest {
 
     @Test
-    public void canLoadWorldWithoutErrors() throws IOException {
+    public void canLoadWorldWithoutErrors() throws IOException, IncorrectFileException {
         File file = new File("examples-worlds/seed_77.world");
         World world = PickleSerialization.loadWorld(file);
     }
 
     @Test
-    public void nameIsLoaded() throws IOException {
+    public void nameIsLoaded() throws IOException, IncorrectFileException {
         File file = new File("examples-worlds/seed_77.world");
         World world = PickleSerialization.loadWorld(file);
         assertEquals("seed_77", world.getName());
     }
 
     @Test
-    public void dimensionIsLoaded() throws IOException {
+    public void dimensionIsLoaded() throws IOException, IncorrectFileException {
         File file = new File("examples-worlds/seed_77.world");
         World world = PickleSerialization.loadWorld(file);
         assertEquals(new Dimension(512, 512), world.getDimension());
