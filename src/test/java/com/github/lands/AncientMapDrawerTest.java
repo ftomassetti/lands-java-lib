@@ -29,7 +29,7 @@ public class AncientMapDrawerTest {
 
     @Test
     public void drawAncientMap() throws IOException {
-        BufferedImage image = AncientMapDrawer.drawAncientMap(this.world);
+        BufferedImage image = AncientMapDrawer.drawAncientMap(this.world, 2);
         //File outputfile = new File("saved.png");
         //ImageIO.write(image, "png", outputfile);
         assertNotNull(image);

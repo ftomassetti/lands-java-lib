@@ -48,16 +48,21 @@ public class AncientMapDrawer {
     }
 
     public static BufferedImage drawAncientMap(World world) {
+        return drawAncientMap(world, 1);
+    }
+
+    public static BufferedImage drawAncientMap(World world, int factor) {
         PythonInterpreter interpreter = new PythonInterpreter();
 
         PyObject pythonWorld = world.asPythonObject();
 
         interpreter.set("world", pythonWorld);
+        interpreter.set("factor", factor);
         interpreter.exec("import sys");
         interpreter.exec("sys.path.append(\"python/lands/lands\") ");
         interpreter.exec("from lands.drawing_functions import *");
         interpreter.exec("pixels = {}");
-        interpreter.exec("draw_oldmap_on_pixels(world, pixels)");
+        interpreter.exec("draw_oldmap_on_pixels(world, pixels, factor)");
 
         return toJavaImage(world.getDimension(), interpreter.get("pixels"));
     }
