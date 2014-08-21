@@ -7,30 +7,58 @@ import org.python.core.PyObject;
  */
 public class World {
 
-    private PyObject pythonObject;
-
     private final String name;
     private final Dimension dimension;
+    private PyObject pythonObject;
+    // always present
+    private BooleanMatrix ocean;
+    private FloatMatrix elevation;
+    private FloatMatrix precipitations;
+    private FloatMatrix permeability;
+    private FloatMatrix temperature;
+    // optional
+    private BiomeMatrix biome;
+    private FloatMatrix seaDepth;
+    private IntMatrix watermap;
+    private FloatMatrix humidity;
+    private FloatMatrix irrigation;
+
+    public World(PyObject pythonObject, String name, Dimension dimension) {
+        this.pythonObject = pythonObject;
+        this.name = name;
+        this.dimension = dimension;
+    }
+
+    public FloatMatrix getPermeability() {
+        return permeability;
+    }
+
+    public void setPermeability(FloatMatrix permeability) {
+        this.permeability = permeability;
+    }
+
+    public FloatMatrix getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(FloatMatrix temperature) {
+        this.temperature = temperature;
+    }
 
     public BooleanMatrix getOcean() {
         return ocean;
+    }
+
+    public void setOcean(BooleanMatrix ocean) {
+        this.ocean = ocean;
     }
 
     public BiomeMatrix getBiome() {
         return biome;
     }
 
-    // always present
-    private BooleanMatrix ocean;
-    private FloatMatrix elevation;
-
-    // optional
-    private BiomeMatrix biome;
-
-    public World(PyObject pythonObject, String name, Dimension dimension){
-        this.pythonObject = pythonObject;
-        this.name = name;
-        this.dimension = dimension;
+    public void setBiome(BiomeMatrix biome) {
+        this.biome = biome;
     }
 
     @Override
@@ -43,6 +71,7 @@ public class World {
 
     /**
      * For performance reasons we consider only the name and the dimension.
+     *
      * @param o
      * @return
      */
@@ -82,17 +111,40 @@ public class World {
         this.elevation = elevation;
     }
 
-    public void setBiome(BiomeMatrix biome) {
-        this.biome = biome;
-    }
-
-    public void setOcean(BooleanMatrix ocean) {
-        this.ocean = ocean;
-    }
-
-    public PyObject asPythonObject()
-    {
+    public PyObject asPythonObject() {
         return this.pythonObject;
+    }
+
+    public FloatMatrix getSeaDepth() {
+        return seaDepth;
+    }
+
+    public void setSeaDepth(FloatMatrix seaDepth) {
+        this.seaDepth = seaDepth;
+    }
+
+    public IntMatrix getWatermap() {
+        return watermap;
+    }
+
+    public void setWatermap(IntMatrix watermap) {
+        this.watermap = watermap;
+    }
+
+    public void setHumidity(FloatMatrix humidity) {
+        this.humidity = humidity;
+    }
+
+    public void setIrrigation(FloatMatrix irrigation) {
+        this.irrigation = irrigation;
+    }
+
+    public FloatMatrix getPrecipitations() {
+        return precipitations;
+    }
+
+    public void setPrecipitations(FloatMatrix precipitations) {
+        this.precipitations = precipitations;
     }
 
 }

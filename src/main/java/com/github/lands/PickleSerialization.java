@@ -22,8 +22,7 @@ public final class PickleSerialization {
         // Prevent instantiation
     }
 
-    private static FloatMatrix loadFloatMatrix(Map<?, ?> matrixRaw) {
-        List<?> matrixRawData = (List<?>)matrixRaw.get("data");
+    private static FloatMatrix loadFloatMatrix(List<?> matrixRawData) {
         int height = matrixRawData.size();
         List<?> firstRow = (List<?>)matrixRawData.get(0);
         int width = firstRow.size();
@@ -32,11 +31,45 @@ public final class PickleSerialization {
         for (int y=0;y<height;y++) {
             List<?> row = (List<?>)matrixRawData.get(y);
             for (int x=0;x<width;x++) {
-                double value = (Double)row.get(x);
-                matrix.set(x, y, (float)value);
+                if (row.get(x) instanceof Double) {
+                    double value = (Double) row.get(x);
+                    matrix.set(x, y, (float) value);
+                } else if (row.get(x) instanceof Integer) {
+                    double value = (Integer) row.get(x);
+                    matrix.set(x, y, (float) value);
+                } else {
+                    throw new RuntimeException("Unexpected value "+row.get(x));
+                }
             }
         }
         return matrix;
+    }
+
+    private static IntMatrix loadIntMatrix(List<?> matrixRawData) {
+        int height = matrixRawData.size();
+        List<?> firstRow = (List<?>)matrixRawData.get(0);
+        int width = firstRow.size();
+
+        IntMatrix matrix = new IntMatrix(new Dimension(width, height));
+        for (int y=0;y<height;y++) {
+            List<?> row = (List<?>)matrixRawData.get(y);
+            for (int x=0;x<width;x++) {
+                int value = (Integer)row.get(x);
+                matrix.set(x, y, value);
+            }
+        }
+        return matrix;
+    }
+
+
+    private static FloatMatrix loadFloatMatrix(Map<?, ?> matrixRaw) {
+        List<?> matrixRawData = (List<?>)matrixRaw.get("data");
+        return loadFloatMatrix(matrixRawData);
+    }
+
+    private static IntMatrix loadIntMatrix(Map<?, ?> matrixRaw) {
+        List<?> matrixRawData = (List<?>)matrixRaw.get("data");
+        return loadIntMatrix(matrixRawData);
     }
 
     private static BooleanMatrix loadBooleanMatrix(List<?> matrixRawData) {
@@ -81,6 +114,20 @@ public final class PickleSerialization {
         return interpreter.eval("World.from_dict(world_raw)");
     }
 
+    private interface Loader {
+        public void load(World world, Object data);
+    }
+
+    private static void loadIfAvailable(World world, ClassDict worldRaw, String name, Loader loader) {
+        try {
+            if (worldRaw.containsKey(name)){
+                loader.load(world, worldRaw.get(name));
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Problem while loading "+name, e);
+        }
+    }
+
     public static World loadWorld(final File file) throws IOException, IncorrectFileException {
         Unpickler unpickler = new Unpickler();
         ClassDict worldRaw = (ClassDict)unpickler.load(new FileInputStream(file));
@@ -99,9 +146,46 @@ public final class PickleSerialization {
             if (worldRaw.containsKey("biome")) {
                 world.setBiome(loadBiomeMatrix((List<?>) worldRaw.get("biome")));
             }
+            if (worldRaw.containsKey("temperature")) {
+                world.setTemperature(loadFloatMatrix((Map<?, ?>) worldRaw.get("temperature")));
+            }
+            if (worldRaw.containsKey("sea_depth")) {
+                world.setSeaDepth(loadFloatMatrix((List<?>) worldRaw.get("sea_depth")));
+            }
+            loadIfAvailable(world, worldRaw, "watermap", new Loader(){
+                @Override
+                public void load(World world, Object data) {
+                    loadFloatMatrix((Map<?, ?>) data);
+                }
+            });
+            loadIfAvailable(world, worldRaw, "permeability", new Loader(){
+                @Override
+                public void load(World world, Object data) {
+                    world.setPermeability(loadFloatMatrix((Map<?, ?>) data));
+                }
+            });
+            loadIfAvailable(world, worldRaw, "humidity", new Loader(){
+                @Override
+                public void load(World world, Object data) {
+                    world.setHumidity(loadFloatMatrix((Map<?, ?>) data));
+                }
+            });
+            loadIfAvailable(world, worldRaw, "irrigation", new Loader(){
+                @Override
+                public void load(World world, Object data) {
+                    world.setIrrigation(loadFloatMatrix((List<?>) data));
+                }
+            });
+            loadIfAvailable(world, worldRaw, "precipitation", new Loader(){
+                @Override
+                public void load(World world, Object data) {
+                    world.setPrecipitations(loadFloatMatrix((Map<?, ?>) data));
+                }
+            });
+
             return world;
         } catch (Exception e){
-            throw new IncorrectFileException(file, e.toString());
+            throw new IncorrectFileException(file, e.toString(), e);
         }
     }
 }
