@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Utility to load and save data in the Pickle format (typically used by Python
@@ -61,10 +62,60 @@ public final class PickleSerialization {
         return matrix;
     }
 
+    private static float loadThresholdMax(Object[] thresholdElement) {
+        if (thresholdElement.length != 2) {
+            throw new RuntimeException("Threshold element expected to have length 2");
+        }
+        double value = (Double)thresholdElement[1];
+        return (float)value;
+    }
 
-    private static FloatMatrix loadFloatMatrix(Map<?, ?> matrixRaw) {
+    private static Thresholds loadThresholds(List<?> thresholdsRaw) {
+        if (thresholdsRaw.size() != 4) {
+            throw new RuntimeException("Expected size 4 "+thresholdsRaw.size());
+        }
+        float low = loadThresholdMax((Object[])thresholdsRaw.get(0));
+        float med = loadThresholdMax((Object[])thresholdsRaw.get(1));
+        float high = loadThresholdMax((Object[])thresholdsRaw.get(2));
+        return new Thresholds(low, med, high);
+    }
+
+    private static Quantiles loadQuantiles(Map<?, ?> quantilesRaw) {
+        Quantiles quantiles = new Quantiles();
+        for (Object keyRaw : quantilesRaw.keySet()){
+            Object valueRaw = quantilesRaw.get(keyRaw);
+            String keyAsString = (String)keyRaw;
+            int keyAsInt = Integer.parseInt(keyAsString);
+            double value = (Double)valueRaw;
+            quantiles.set(keyAsInt, (float)value);
+        }
+        return quantiles;
+    }
+
+    private static FloatMatrix loadFloatMatrix(Map<?, ?> matrixRaw, boolean withThresholds) {
         List<?> matrixRawData = (List<?>)matrixRaw.get("data");
-        return loadFloatMatrix(matrixRawData);
+        FloatMatrix baseMatrix = loadFloatMatrix(matrixRawData);
+        if (!withThresholds) {
+            return baseMatrix;
+        } else {
+            if (matrixRaw.containsKey("quantiles")) {
+                Object quantilesRaw = matrixRaw.get("quantiles");
+                if (quantilesRaw instanceof Map) {
+                    return new FloatMatrix(baseMatrix, loadQuantiles((Map<?, ?>) quantilesRaw));
+                } else {
+                    throw new RuntimeException("Unexpected: List or Map, it is "+quantilesRaw);
+                }
+            } else if (matrixRaw.containsKey("thresholds")) {
+                Object thresholdRaw = matrixRaw.get("thresholds");
+                if (thresholdRaw instanceof List) {
+                    return new FloatMatrix(baseMatrix, loadThresholds((List<?>) thresholdRaw));
+                } else {
+                    throw new RuntimeException("Unexpected: List or Map, it is "+thresholdRaw);
+                }
+            } else {
+                throw new RuntimeException("No thresholds or quantiles found");
+            }
+        }
     }
 
     private static IntMatrix loadIntMatrix(Map<?, ?> matrixRaw) {
@@ -140,34 +191,37 @@ public final class PickleSerialization {
 
             World world = new World(pythonWorld, name, new Dimension(width, height));
 
-            world.setElevation(loadFloatMatrix((Map<?, ?>) worldRaw.get("elevation")));
+            world.setElevation(loadFloatMatrix((Map<?, ?>) worldRaw.get("elevation"), false));
             world.setOcean(loadBooleanMatrix((List<?>) worldRaw.get("ocean")));
 
             if (worldRaw.containsKey("biome")) {
                 world.setBiome(loadBiomeMatrix((List<?>) worldRaw.get("biome")));
             }
-            if (worldRaw.containsKey("temperature")) {
-                world.setTemperature(loadFloatMatrix((Map<?, ?>) worldRaw.get("temperature")));
-            }
+            loadIfAvailable(world, worldRaw, "temperature", new Loader(){
+                @Override
+                public void load(World world, Object data) {
+                    loadFloatMatrix((Map<?, ?>) data, true);
+                }
+            });
             if (worldRaw.containsKey("sea_depth")) {
                 world.setSeaDepth(loadFloatMatrix((List<?>) worldRaw.get("sea_depth")));
             }
             loadIfAvailable(world, worldRaw, "watermap", new Loader(){
                 @Override
                 public void load(World world, Object data) {
-                    loadFloatMatrix((Map<?, ?>) data);
+                    loadFloatMatrix((Map<?, ?>) data, false);
                 }
             });
             loadIfAvailable(world, worldRaw, "permeability", new Loader(){
                 @Override
                 public void load(World world, Object data) {
-                    world.setPermeability(loadFloatMatrix((Map<?, ?>) data));
+                    world.setPermeability(loadFloatMatrix((Map<?, ?>) data, false));
                 }
             });
             loadIfAvailable(world, worldRaw, "humidity", new Loader(){
                 @Override
                 public void load(World world, Object data) {
-                    world.setHumidity(loadFloatMatrix((Map<?, ?>) data));
+                    world.setHumidity(loadFloatMatrix((Map<?, ?>) data, true));
                 }
             });
             loadIfAvailable(world, worldRaw, "irrigation", new Loader(){
@@ -179,7 +233,7 @@ public final class PickleSerialization {
             loadIfAvailable(world, worldRaw, "precipitation", new Loader(){
                 @Override
                 public void load(World world, Object data) {
-                    world.setPrecipitations(loadFloatMatrix((Map<?, ?>) data));
+                    world.setPrecipitations(loadFloatMatrix((Map<?, ?>) data, false));
                 }
             });
 
