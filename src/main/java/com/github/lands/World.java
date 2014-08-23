@@ -19,7 +19,16 @@ public class World {
     // optional
     private BiomeMatrix biome;
     private FloatMatrix seaDepth;
-    private IntMatrix watermap;
+    private FloatMatrix watermap;
+
+    public FloatMatrix getHumidity() {
+        return humidity;
+    }
+
+    public FloatMatrix getIrrigation() {
+        return irrigation;
+    }
+
     private FloatMatrix humidity;
     private FloatMatrix irrigation;
 
@@ -123,11 +132,11 @@ public class World {
         this.seaDepth = seaDepth;
     }
 
-    public IntMatrix getWatermap() {
+    public FloatMatrix getWatermap() {
         return watermap;
     }
 
-    public void setWatermap(IntMatrix watermap) {
+    public void setWatermap(FloatMatrix watermap) {
         this.watermap = watermap;
     }
 
