@@ -1,0 +1,12 @@
+[submodule "python/python/langgen"]
+	path = python/python/langgen
+	url = git@github.com:ftomassetti/langgen.git
+	branch = master
+[submodule "python/langgen"]
+	path = python/langgen
+	url = git@github.com:ftomassetti/langgen.git
+	branch = master
+[submodule "python/lands"]
+	path = python/lands
+	url = git@github.com:ftomassetti/lands.git
+	branch = master
