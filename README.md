@@ -11,6 +11,26 @@ This is needed to integrate [lands](https://github.com/ftomassetti/lands) with J
 
 The plan is to reuse Java libraries for erosion, like [procedurality-lands](https://github.com/ftomassetti/procedurality-lands) and develop AI for Civs simulation in Clojure (possibly using core.logic).
 
+How to get it
+-------------
+
+Code is available here, if you want just to add to your project and use the library go ahead.
+
+Maven:
+
+```xml
+<dependency>
+  <groupId>com.github.lands</groupId>
+  <artifactId>lands-java-lib</artifactId>
+  <version>0.3-SNAPSHOT</version>
+</dependency>
+```
+    
+Leiningen:
+
+    [com.github.lands/lands-java-lib "0.3-SNAPSHOT"]
+
+
 How to generate languages and names
 -----------------------------------
 
