@@ -14,7 +14,6 @@ public class Language {
 
     private PythonInterpreter interpreter;
     private List<String> samples = new LinkedList<String>();
-
     // Every time a new sample is created the python language is
     // not immediately update but this variable is instead set to true
     private boolean needAnUpdate = true;
@@ -28,9 +27,26 @@ public class Language {
         interpreter.exec("sys.path.append(\"python/langgen\") ");
         interpreter.exec("from langgen.langgen import *");
         interpreter.exec("samples = []");
-        for (String sample : samples){
+        for (String sample : samples) {
             addSample(sample);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Language language = (Language) o;
+
+        if (!samples.equals(language.samples)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return samples.hashCode();
     }
 
     private void updateIfNecessary() {
@@ -42,12 +58,12 @@ public class Language {
 
     public String name() {
         updateIfNecessary();
-        return ((PyString)interpreter.eval("language.name()")).asString();
+        return ((PyString) interpreter.eval("language.name()")).asString();
     }
 
     public void addSample(String sample) {
         samples.add(sample);
-        interpreter.exec("samples.append(\""+sample+"\")");
+        interpreter.exec("samples.append(\"" + sample + "\")");
         needAnUpdate = true;
     }
 
