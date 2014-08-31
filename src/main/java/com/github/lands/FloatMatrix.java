@@ -43,7 +43,7 @@ public class FloatMatrix {
 
     public Thresholds thresholds() {
         if (this.thresholds == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("No thresholds available");
         } else {
             return this.thresholds;
         }
@@ -51,7 +51,7 @@ public class FloatMatrix {
 
     public Quantiles quantiles() {
         if (this.quantiles == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("No quantiles available");
         } else {
             return this.quantiles;
         }
